@@ -110,7 +110,6 @@
             margin-bottom: 10px;
         }
 
-        /* 优化填表按钮 */
         .submit-btn {
             background: #f4a7b9;
             color: white;
@@ -133,6 +132,7 @@
             border-collapse: collapse; 
             margin-top: 10px; 
             table-layout: fixed;
+            font-size: 14px; /* 字体缩小 */
         }
 
         th, td { 
@@ -149,7 +149,6 @@
             z-index: 10;
         }
 
-        /* 让TlgID自动换行 */
         td:nth-child(2) {
             word-break: break-word;
         }
@@ -211,5 +210,19 @@
         </table>
     </div>
     <div class="footer">任何问题找@yuxin00</div>
+
+    <!-- 填表弹窗 -->
+    <div id="formPopup" class="form-popup">
+        <div class="form-container">
+            <h3>填写信息</h3>
+            <input type="text" id="name" placeholder="署名">
+            <input type="text" id="tlgid" placeholder="TlgID (@Username)">
+            <input type="text" id="club" placeholder="会名">
+            <input type="text" id="po" placeholder="po名">
+            <input type="text" id="date" placeholder="入会时间 (XX年XX月XX日)">
+            <button onclick="submitForm()">提交</button>
+            <button class="close-btn" onclick="closeForm()">关闭</button>
+        </div>
+    </div>
 </body>
 </html>
