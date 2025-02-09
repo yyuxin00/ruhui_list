@@ -8,6 +8,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"; 
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
+        // Firebase 配置
         const firebaseConfig = {
             apiKey: "AIzaSyDY01NKM7VfEN44HlADxwqL0lRj3qHwSi0",
             authDomain: "ruhui-list.firebaseapp.com",
@@ -17,6 +18,7 @@
             appId: "1:1078188232572:web:2535665136852eed451ef9"
         };
 
+        // 初始化 Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
@@ -104,8 +106,8 @@
         .container { max-width: 800px; margin: 20px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
         .top-bar { display: flex; justify-content: space-between; margin-bottom: 10px; }
         .search-box, .submit-btn { padding: 8px; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-        th, td { border: 1px solid #ddd; padding: 6px; text-align: left; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background-color: #f4a7b9; color: white; }
         .footer { margin-top: 20px; font-size: 12px; color: #666; }
         .form-popup {
@@ -159,5 +161,19 @@
         </table>
     </div>
     <div class="footer">任何问题找@yuxin00</div>
+
+    <!-- 填表弹窗 -->
+    <div class="form-popup" id="formPopup">
+        <div class="form-container">
+            <h3>填写入会信息</h3>
+            <input type="text" id="name" placeholder="署名">
+            <input type="text" id="tlgid" placeholder="TlgID (@username)">
+            <input type="text" id="club" placeholder="会名">
+            <input type="text" id="po" placeholder="po名">
+            <input type="text" id="date" placeholder="入会时间 (XX年XX月XX日)">
+            <button id="submitForm">提交</button>
+            <button class="close-btn" onclick="closeForm()">关闭</button>
+        </div>
+    </div>
 </body>
 </html>
