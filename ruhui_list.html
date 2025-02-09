@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>原款姐の入会列表</title> 
+    <script type="module"> 
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"; 
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+        // Firebase 配置
+        const firebaseConfig = {
+            apiKey: "AIzaSyDY01NKM7VfEN44HlADxwqL0lRj3qHwSi0",
+            authDomain: "ruhui-list.firebaseapp.com",
+            projectId: "ruhui-list",
+            storageBucket: "ruhui-list.appspot.com",
+            messagingSenderId: "1078188232572",
+            appId: "1:1078188232572:web:2535665136852eed451ef9"
+        };
+
+        // 初始化 Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        function loadEntries() {
+            const q = query(collection(db, "entries"), orderBy("club", "asc"));
+            onSnapshot(q, (snapshot) => {
+                let entries = [];
+                snapshot.forEach((doc) => {
+                    entries.push(doc.data());
+                });
+                renderTable(entries);
+            });
+        }
+
+        function renderTable(entries) {
+            let tableBody = document.querySelector("#entryTable tbody");
+            tableBody.innerHTML = "";
+            let fragment = document.createDocumentFragment();
+            
+            entries.forEach((data) => {
+                let row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${data.name}</td>
+                    <td>${data.tlgid}</td>
+                    <td>${data.club}</td>
+                    <td>${data.po}</td>
+                    <td>${data.date}</td>
+                `;
+                fragment.appendChild(row);
+            });
+
+            tableBody.appendChild(fragment);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadEntries();
+
+            document.getElementById("search").addEventListener("input", function () {
+                const searchValue = this.value.toLowerCase().trim();
+                const q = query(collection(db, "entries"), orderBy("club", "asc"));
+                onSnapshot(q, (snapshot) => {
+                    let filteredEntries = [];
+                    snapshot.forEach((doc) => {
+                        let data = doc.data();
+                        if (data.club.toLowerCase().includes(searchValue) || data.po.toLowerCase().includes(searchValue)) {
+                            filteredEntries.push(data);
+                        }
+                    });
+                    renderTable(filteredEntries);
+                });
+            });
+
+            document.getElementById("submitForm").addEventListener("click", async function () {
+                let name = document.getElementById('name').value.trim();
+                let tlgid = document.getElementById('tlgid').value.trim();
+                let club = document.getElementById('club').value.trim();
+                let po = document.getElementById('po').value.trim();
+                let date = document.getElementById('date').value.trim();
+
+                if (!name || !tlgid || !club || !po || !date) {
+                    alert('请填写所有字段');
+                    return;
+                }
+
+                try {
+                    await addDoc(collection(db, "entries"), { name, tlgid, club, po, date });
+                    alert("提交成功！");
+                    closeForm();
+                } catch (error) {
+                    alert("提交失败: " + error);
+                }
+            });
+        });
+
+        window.openForm = function () {
+            document.getElementById('formPopup').style.display = 'flex';
+        };
+        window.closeForm = function () {
+            document.getElementById('formPopup').style.display = 'none';
+        };
+    </script>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f8f8f8; text-align: center; padding: 20px; }
+        h1 { color: #222; border-bottom: 2px solid #f4a7b9; display: inline-block; padding-bottom: 5px; }
+        .container { max-width: 800px; margin: 20px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        .top-bar { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .search-box, .submit-btn { padding: 8px; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f4a7b9; color: white; }
+        .footer { margin-top: 20px; font-size: 12px; color: #666; }
+        .form-popup {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            justify-content: center;
+            align-items: center;
+        }
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 300px;
+        }
+        .form-container input {
+            width: 100%;
+            margin: 5px 0;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-container button {
+            width: 100%;
+            padding: 8px;
+            border: none;
+            background: #f4a7b9;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .close-btn {
+            background: #ccc;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>原款姐の入会列表</h1>
+    <div class="container">
+        <div class="top-bar">
+            <button class="submit-btn" onclick="openForm()">填表</button>
+            <input type="text" class="search-box" id="search" placeholder="搜索会名/po名">
+        </div>
+        <table id="entryTable">
+            <thead><tr><th>署名</th><th>TlgID</th><th>会名</th><th>po名</th><th>入会时间</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="footer">任何问题找@yuxin00</div>
+
+    <!-- 填表弹窗 -->
+    <div class="form-popup" id="formPopup">
+        <div class="form-container">
+            <h3>填写入会信息</h3>
+            <input type="text" id="name" placeholder="署名">
+            <input type="text" id="tlgid" placeholder="TlgID (@username)">
+            <input type="text" id="club" placeholder="会名">
+            <input type="text" id="po" placeholder="po名">
+            <input type="text" id="date" placeholder="入会时间 (XX年XX月XX日)">
+            <button id="submitForm">提交</button>
+            <button class="close-btn" onclick="closeForm()">关闭</button>
+        </div>
+    </div>
+</body>
+</html>
