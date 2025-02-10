@@ -89,21 +89,61 @@
         };
     </script>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f8f8f8; text-align: center; padding: 20px; }
-        h1 { color: #222; border-bottom: 2px solid #f4a7b9; display: inline-block; padding-bottom: 5px; }
-        .container { max-width: 800px; margin: 20px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
-        .top-bar { display: flex; justify-content: space-between; margin-bottom: 10px; }
-        .search-box, .submit-btn { padding: 8px; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; }
-        
-        /* 让表格在手机端可滑动 */
-        .table-container { overflow-x: auto; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 600px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f4a7b9; color: white; }
-        .footer { margin-top: 20px; font-size: 12px; color: #666; }
-        
-        /* 填表弹窗 */
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #f8f8f8; 
+            text-align: center; 
+            padding: 20px; 
+        }
+        h1 { 
+            color: #222; 
+            border-bottom: 2px solid #f4a7b9; 
+            display: inline-block; 
+            padding-bottom: 5px; 
+        }
+        .subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 20px auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+        }
+        .top-bar { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 10px; 
+        }
+        .search-box, .submit-btn { 
+            padding: 8px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            cursor: pointer; 
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 10px; 
+            min-width: 600px; /* 让表格有足够的宽度 */
+        }
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 8px; 
+            text-align: left; 
+        }
+        th { 
+            background-color: #f4a7b9; 
+            color: white; 
+        }
         .form-popup {
             display: none;
             position: fixed;
@@ -144,6 +184,8 @@
 </head>
 <body>
     <h1>原款姐の入会列表</h1>
+    <div class="subtitle">任何问题找 @yuxin00</div> <!-- 现在在标题下方 -->
+
     <div class="container">
         <div class="top-bar">
             <button class="submit-btn" onclick="openForm()">填表</button>
@@ -156,19 +198,17 @@
             </table>
         </div>
     </div>
-    <div class="footer">任何问题找@yuxin00</div>
 
-    <!-- 填表弹窗 -->
-    <div id="formPopup" class="form-popup">
+    <div class="form-popup" id="formPopup">
         <div class="form-container">
             <h3>填写入会信息</h3>
             <input type="text" id="name" placeholder="署名">
-            <input type="text" id="tlgid" placeholder="TlgID (@Username)">
+            <input type="text" id="tlgid" placeholder="TlgID (@username)">
             <input type="text" id="club" placeholder="会名">
             <input type="text" id="po" placeholder="po名">
             <input type="text" id="date" placeholder="入会时间 (日/月/年)">
             <button id="submitForm">提交</button>
-            <button class="close-btn" onclick="closeForm()">取消</button>
+            <button class="close-btn" onclick="closeForm()">关闭</button>
         </div>
     </div>
 </body>
