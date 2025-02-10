@@ -8,7 +8,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"; 
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-        // Firebase 配置
         const firebaseConfig = {
             apiKey: "AIzaSyDY01NKM7VfEN44HlADxwqL0lRj3qHwSi0",
             authDomain: "ruhui-list.firebaseapp.com",
@@ -18,18 +17,15 @@
             appId: "1:1078188232572:web:2535665136852eed451ef9"
         };
 
-        // 初始化 Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        let allEntries = [];
 
         function loadEntries() {
             const q = query(collection(db, "entries"), orderBy("club", "asc"));
             onSnapshot(q, (snapshot) => {
-                let entries = [];
-                snapshot.forEach((doc) => {
-                    entries.push(doc.data());
-                });
-                renderTable(entries);
+                allEntries = snapshot.docs.map(doc => doc.data());
+                renderTable(allEntries);
             });
         }
 
@@ -49,7 +45,6 @@
                 `;
                 fragment.appendChild(row);
             });
-
             tableBody.appendChild(fragment);
         }
 
@@ -58,17 +53,10 @@
 
             document.getElementById("search").addEventListener("input", function () {
                 const searchValue = this.value.toLowerCase().trim();
-                const q = query(collection(db, "entries"), orderBy("club", "asc"));
-                onSnapshot(q, (snapshot) => {
-                    let filteredEntries = [];
-                    snapshot.forEach((doc) => {
-                        let data = doc.data();
-                        if (data.club.toLowerCase().includes(searchValue) || data.po.toLowerCase().includes(searchValue)) {
-                            filteredEntries.push(data);
-                        }
-                    });
-                    renderTable(filteredEntries);
-                });
+                const filteredEntries = allEntries.filter(entry => 
+                    entry.club.toLowerCase().includes(searchValue) || entry.po.toLowerCase().includes(searchValue)
+                );
+                renderTable(filteredEntries);
             });
 
             document.getElementById("submitForm").addEventListener("click", async function () {
@@ -161,8 +149,6 @@
         </table>
     </div>
     <div class="footer">任何问题找@yuxin00</div>
-
-    <!-- 填表弹窗 -->
     <div class="form-popup" id="formPopup">
         <div class="form-container">
             <h3>填写入会信息</h3>
@@ -170,7 +156,7 @@
             <input type="text" id="tlgid" placeholder="TlgID (@username)">
             <input type="text" id="club" placeholder="会名">
             <input type="text" id="po" placeholder="po名">
-            <input type="text" id="date" placeholder="入会时间 (XX年XX月XX日)">
+            <input type="text" id="date" placeholder="入会时间 (日/月/年)">
             <button id="submitForm">提交</button>
             <button class="close-btn" onclick="closeForm()">关闭</button>
         </div>
