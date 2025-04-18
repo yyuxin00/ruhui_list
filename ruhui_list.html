@@ -54,8 +54,12 @@
             document.getElementById("search").addEventListener("input", function () {
                 const searchValue = this.value.toLowerCase().trim();
                 const filteredEntries = allEntries.filter(entry => 
-                    entry.club.toLowerCase().includes(searchValue) || entry.po.toLowerCase().includes(searchValue)
-                );
+				    (entry.name || "").toLowerCase().includes(searchValue) ||
+				    (entry.tlgid || "").toLowerCase().includes(searchValue) ||
+				    (entry.club || "").toLowerCase().includes(searchValue) ||
+				    (entry.po || "").toLowerCase().includes(searchValue)
+				);
+
                 renderTable(filteredEntries);
             });
 
@@ -199,7 +203,7 @@
     <div class="container">
         <div class="top-bar">
             <button class="submit-btn" onclick="openForm()">填表</button>
-            <input type="text" class="search-box" id="search" placeholder="搜索会名/po名">
+            <input type="text" class="search-box" id="search" placeholder="搜索会名/po名/署名/ID">
         </div>
         <div class="table-container">
             <table id="entryTable">
