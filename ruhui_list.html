@@ -22,7 +22,7 @@
         let allEntries = [];
 
         function loadEntries() {
-            const q = query(collection(db, "entries"), orderBy("club", "asc"));
+            const q = query(collection(db, "entries"), orderBy("date", "desc")); // 最新的排前面
             onSnapshot(q, (snapshot) => {
                 allEntries = snapshot.docs.map(doc => doc.data());
                 renderTable(allEntries);
