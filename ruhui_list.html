@@ -160,23 +160,24 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             width: 300px;
         }
-        .form-container input {
-            width: 100%;
-            margin: 5px 0;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
+        .form-container input,
         .form-container button {
             width: 100%;
+            box-sizing: border-box;
+            margin: 5px 0;
             padding: 8px;
+            border-radius: 5px;
+        }
+        .form-container input {
+            border: 1px solid #ddd;
+        }
+        .form-container button {
             border: none;
             background: #f4a7b9;
             color: white;
-            border-radius: 5px;
             cursor: pointer;
         }
-        .close-btn {
+        .form-container .close-btn {
             background: #ccc;
             margin-top: 10px;
         }
