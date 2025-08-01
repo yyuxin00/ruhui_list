@@ -156,18 +156,24 @@
       const name = document.getElementById('userName').value.trim();
       const tlgid = document.getElementById('userTlgid').value.trim();
       if (!name || !tlgid) return alert("请填写完整信息");
-
-      await updateDoc(userRef, { name, tlgid });
-
-      // 同步更新所有相关 entries
-      const q = query(collection(db, "entries"), where("userId", "==", uid));
-      const snap = await getDocs(q);
-      snap.forEach(async d => {
-        await updateDoc(doc(db, "entries", d.id), { name, tlgid });
-      });
-
-      alert("信息已更新");
+    
+      try {
+        await setDoc(userRef, { name, tlgid }, { merge: true }); // 自动创建或更新
+    
+        // 同步更新所有 entries
+        const q = query(collection(db, "entries"), where("userId", "==", uid));
+        const snap = await getDocs(q);
+        for (const d of snap.docs) {
+          await updateDoc(doc(db, "entries", d.id), { name, tlgid });
+        }
+    
+        alert("信息已保存！");
+      } catch (e) {
+        console.error("保存失败", e);
+        alert("保存失败：" + e.message);
+      }
     };
+
 
     window.saveEntry = async (id) => {
       const inputs = document.querySelectorAll(`[data-id='${id}']`);
