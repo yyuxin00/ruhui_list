@@ -158,8 +158,8 @@
       if (!name || !tlgid) return alert("请填写完整信息");
     
       try {
-        import { setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-        await setDoc(userRef, { name, tlgid }, { merge: true });
+        await updateDoc(userRef, { name, tlgid });
+
 
     
         // 同步更新所有 entries
