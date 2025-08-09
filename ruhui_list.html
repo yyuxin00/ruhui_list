@@ -160,8 +160,10 @@
       orderBy, doc, getDoc, setDoc
     } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
     import {
-      getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+	  getAuth, signInWithPopup, signInWithRedirect, getRedirectResult,
+	  GoogleAuthProvider, onAuthStateChanged
+	} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
 
     const firebaseConfig = {
       apiKey: "AIzaSyDY01NKM7VfEN44HlADxwqL0lRj3qHwSi0",
@@ -183,17 +185,38 @@
 
     const avatar = document.getElementById("avatar");
 
+	getRedirectResult(auth)
+	  .then((result) => {
+	    if (result && result.user) {
+	      console.log("移动端登录成功", result.user);
+	    }
+	  })
+	  .catch((error) => {
+	    console.error("重定向登录失败", error);
+	  });
+
+
     function setupAvatarClick() {
-      avatar.addEventListener("click", () => {
-        if (!currentUser) {
-          signInWithPopup(auth, provider).catch(err => {
-            alert("登录失败：" + err.message);
-          });
-        } else {
-          location.href = "user.html";
-        }
-      });
-    }
+	  avatar.addEventListener("click", () => {
+	    if (!currentUser) {
+	      const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+	      if (isMobile) {
+	        signInWithRedirect(auth, provider);
+	      } else {
+	        signInWithPopup(auth, provider).catch(err => {
+	          if (err.code === "auth/popup-closed-by-user") {
+	            alert("您关闭了登录窗口，请重新尝试登录");
+	          } else {
+	            alert("登录失败：" + err.message);
+	          }
+	        });
+	      }
+	    } else {
+	      location.href = "user.html";
+	    }
+	  });
+	}
+
 
     onAuthStateChanged(auth, async user => {
       if (user) {
@@ -297,4 +320,5 @@
   </script>
 </body>
 </html>
+
 
