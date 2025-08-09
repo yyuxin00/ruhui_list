@@ -116,7 +116,7 @@
   
     onAuthStateChanged(auth, async user => {
       if (!user) {
-        alert("请先登录");
+        alert("已退出登录");
         location.href = "index.html";
         return;
       }
@@ -201,4 +201,5 @@
 
 </body>
 </html>
+
 
