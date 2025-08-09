@@ -88,16 +88,16 @@
     </table>
   </div>
 
-  <script type="module">
+    <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
     import {
-      getFirestore, collection, doc, getDoc, updateDoc,
+      getFirestore, collection, doc, getDoc, setDoc, updateDoc,
       query, where, getDocs, deleteDoc
     } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
     import {
       getAuth, onAuthStateChanged, signOut
     } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-
+  
     const firebaseConfig = {
       apiKey: "AIzaSyDY01NKM7VfEN44HlADxwqL0lRj3qHwSi0",
       authDomain: "ruhui-list.firebaseapp.com",
@@ -106,14 +106,14 @@
       messagingSenderId: "1078188232572",
       appId: "1:1078188232572:web:2535665136852eed451ef9"
     };
-
+  
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth();
-
+  
     let uid = null;
     let userRef = null;
-
+  
     onAuthStateChanged(auth, async user => {
       if (!user) {
         alert("请先登录");
@@ -125,12 +125,12 @@
       const snap = await getDoc(userRef);
       if (snap.exists()) {
         const data = snap.data();
-        document.getElementById('userName').value = data.name;
-        document.getElementById('userTlgid').value = data.tlgid;
+        document.getElementById('userName').value = data.name || "";
+        document.getElementById('userTlgid').value = data.tlgid || "";
       }
       loadMyEntries();
     });
-
+  
     async function loadMyEntries() {
       const q = query(collection(db, "entries"), where("userId", "==", uid));
       const snap = await getDocs(q);
@@ -151,32 +151,31 @@
         tbody.appendChild(row);
       });
     }
-
+  
+    // 保存用户信息
     window.saveUserInfo = async () => {
       const name = document.getElementById('userName').value.trim();
       const tlgid = document.getElementById('userTlgid').value.trim();
       if (!name || !tlgid) return alert("请填写完整信息");
-    
+  
       try {
-        
-        await updateDoc(userRef, { name, tlgid });
-    
+        // setDoc 可创建或更新
+        await setDoc(userRef, { name, tlgid }, { merge: true });
+  
         // 同步更新 entries 中所有记录的 name 和 tlgid
         const q = query(collection(db, "entries"), where("userId", "==", uid));
         const snap = await getDocs(q);
         for (const d of snap.docs) {
           await updateDoc(doc(db, "entries", d.id), { name, tlgid });
         }
-    
+  
         alert("信息已保存！");
       } catch (e) {
         console.error("保存失败", e);
         alert("保存失败：" + e.message);
       }
     };
-
-
-
+  
     window.saveEntry = async (id) => {
       const inputs = document.querySelectorAll(`[data-id='${id}']`);
       const data = {};
@@ -186,18 +185,20 @@
       await updateDoc(doc(db, "entries", id), data);
       alert("保存成功");
     };
-
+  
     window.deleteEntry = async (id) => {
       if (confirm("确定要删除吗？")) {
         await deleteDoc(doc(db, "entries", id));
         loadMyEntries();
       }
     };
-
+  
     window.logout = async () => {
       await signOut(auth);
       location.href = "index.html";
     };
   </script>
+
 </body>
 </html>
+
